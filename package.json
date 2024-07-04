@@ -1,0 +1,17 @@
+{
+  "name": "turbo-fullstack",
+  "devDependencies": {
+    "turbo": "^2.0.6"
+  },
+  "packageManager": "npm@10.8.1",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "node apps/api/dist/main"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
+
