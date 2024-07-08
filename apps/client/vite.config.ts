@@ -8,9 +8,10 @@ export default defineConfig({
     proxy: {
       "/api": {
         // Proxy to Local NestJS App!
-        target: "http://localhost:3000",
+        target: "http://localhost:8080",
         changeOrigin: true,
       },
     },
   },
 });
+
