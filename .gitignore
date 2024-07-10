@@ -4,6 +4,11 @@
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
+node_modules
+.env
+.idea
+.vscode
+
 # compiled output
 /dist
 /node_modules
