@@ -1,0 +1,12 @@
+config:
+  aws:region: eu-central-1
+  turbo-monorepo:appEnvironment: dev
+  turbo-monorepo:appName:
+  turbo-monorepo:appPort: 3000
+  turbo-monorepo:instanceType: t3.small
+  turbo-monorepo:dbUsername:
+  turbo-monorepo:dbPassword:
+  turbo-monorepo:dbName:
+  turbo-monorepo:dbPort: 5432
+  turbo-monorepo:dbSSL: true
+
