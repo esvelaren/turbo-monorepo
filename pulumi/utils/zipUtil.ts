@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as archiver from "archiver";
 
 // Function to create a zip file
-export function createZipFile(sourceDir: string, outPath: string): Promise<void> {
+export function createZipFile(sourceDir: string, outPath: string, appName: string): Promise<void> {
   const exclude = [
     "node_modules/**",
     ".git/**",
@@ -13,9 +13,12 @@ export function createZipFile(sourceDir: string, outPath: string): Promise<void>
     "venv/**",
     "apps/api/uploads/**",
     "apps/api/node_modules/**",
+    "apps/api/.env",
     "apps/client/node_modules/**",
     "pulumi/**",
-    "turbo-monorepo.zip",
+    ".turbo/**",
+    ".vscode/**",
+    `${appName}.zip`,
   ];
 
   return new Promise((resolve, reject) => {

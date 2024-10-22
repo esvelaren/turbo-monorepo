@@ -1,6 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
+import * as path from "path";
 import { createZipFile } from "./utils/zipUtil";
 import { getEnvVariables } from "./utils/envVariables";
 import { createIamInstanceProfile } from "./utils/iamRoles";
@@ -17,31 +18,20 @@ const dbName = config.require("dbName");
 const dbSSL = config.require("dbSSL");
 
 // Create the zip file
-const sourceDir = "../../turbo-monorepo";
-const outPath = "../turbo-monorepo.zip";
+const sourceDir = path.join(__dirname, "..");
+const outPath = `../${appName}.zip`;
 
-createZipFile(sourceDir, outPath)
+createZipFile(sourceDir, outPath, appName)
   .then(() => {
     // STEP 0: VPC
     const vpc = new awsx.ec2.Vpc(`${appName}-vpc`);
-    // const vpc = new awsx.ec2.Vpc(`${appName}-vpc`, {
-    //   cidrBlock: "10.0.0.0/16",
-    //   numberOfAvailabilityZones: 3,
-    //   subnetSpecs: [
-    //     { type: "Public", name: `${appName}-public-subnet` },
-    //     { type: "Private", name: `${appName}-private-subnet-1` },
-    //     { type: "Private", name: `${appName}-private-subnet-2` },
-    //   ],
-    //   enableDnsHostnames: true,
-    //   enableDnsSupport: true,
-    // });
 
     // STEP 1: S3 Bucket
     const bucket = new aws.s3.Bucket(`${appName}-s3Bucket`);
     // Upload the Elastic Beanstalk Application source bundle to S3
     const appSourceBundle = new aws.s3.BucketObject(`${appName}-appSourceBundle`, {
       bucket: bucket.id,
-      key: "turbo-monorepo.zip",
+      key: `${appName}.zip`,
       source: new pulumi.asset.FileAsset(outPath),
     });
 
@@ -66,7 +56,12 @@ createZipFile(sourceDir, outPath)
       vpcId: vpc.vpcId,
       ingress: [
         { protocol: "tcp", fromPort: 22, toPort: 22, cidrBlocks: ["0.0.0.0/0"] },
-        { protocol: "tcp", fromPort: 5432, toPort: 5432, cidrBlocks: [vpc.vpc.cidrBlock] },
+        {
+          protocol: "tcp",
+          fromPort: parseInt(dbPort, 10),
+          toPort: parseInt(dbPort, 10),
+          cidrBlocks: [vpc.vpc.cidrBlock],
+        },
       ],
       egress: [{ protocol: "-1", fromPort: 0, toPort: 0, cidrBlocks: ["0.0.0.0/0"] }],
     });
